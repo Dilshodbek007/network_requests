@@ -60,7 +60,7 @@ class NetworkRequest2 {
     Map<String, String?> params = {};
     params.addAll({
       'application': '78233',
-      'otp': user2.otp,
+      'OTP': user2.otp,
       'phone': user2.phone,
       'token': user2.token,
     });
