@@ -20,35 +20,42 @@ class _HomePage1State extends State<HomePage1> {
   final smsController=TextEditingController();
   final phoneSMSController=TextEditingController();
   String? phoneNumber;
+  String token = '12';
 
-  void _apiPhoneNum(User user){
-
-    NetworkRequests.POST(NetworkRequests.apiPost, NetworkRequests.paramsCreate(user)).then((value) => {
-      if(value!=null){
-        print('token0:$value'),
-      }else{
-        print('no response000')
+  void _apiPhoneNum(User user) {
+    NetworkRequests.postRequest(
+      NetworkRequests.apiPost,
+      NetworkRequests.paramsCreate(user),
+    ).then((value) => {
+        if (value != null)
+          {
+            print('token0:$value'),
+            setState(() {
+              token = value['token'];
+            })
+          }
+        else
+          {print('no response000')},
       },
-
-    });
+    );
   }
 
-  String token = '12';
+
   void sendSMS(){
-    var user2=User2(phoneSMSController.text.toString(), smsController.text.toString(),token);
+    var user2=User2(phoneSMSController.text, smsController.text,token);
     _apiSMS(user2);
-    print(phoneSMSController.text.toString());
-    print(smsController.text.toString());
+    print(phoneSMSController.text);
+    print(smsController.text);
     print(token);
   }
 
   void _apiSMS(User2 user2){
-    for(int i=0; i<10; i++){
-    NetworkRequest2.POST(NetworkRequest2.apiSMS, NetworkRequest2.paramsCreateSMS(user2)).then((value) async => {
-     await Future.delayed(const Duration(minutes: 2)),
+    // for(int i=0; i<10; i++){
+    NetworkRequest2.POST(NetworkRequest2.apiSMS, NetworkRequest2.paramsCreateSMS(user2)).then((value) => {
+      print('value----------- $value'),
       if(value!=null){
         setState(() {
-          token=value;
+          token=value[token];
         }),
         print('token1:$value'),
         print(token),
@@ -56,7 +63,7 @@ class _HomePage1State extends State<HomePage1> {
         print('no response111')
       },
     });
-  }
+
   }
 
   @override

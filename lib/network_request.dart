@@ -14,11 +14,15 @@ class NetworkRequests {
   //api
   static String apiPost = '/api/v1/user/validate_phone/';
 
-  static Future<String?> POST(String api, Map<String?, String?> params) async {
+  static Future postRequest(String api, Map<String?, String?> params) async {
     var uri = Uri.https(base, api);
-    var response = await post(uri, headers: header, body: jsonEncode(params));
+    var response = await post(
+      uri,
+      headers: header,
+      body: jsonEncode(params),
+    );
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return response.body;
+      return jsonDecode(response.body);
     }
     print(response.body + ': response.body');
     print('${response.reasonPhrase}: reasonphrase');
@@ -44,13 +48,15 @@ class NetworkRequest2 {
   //api
   static String apiSMS = '/api/v1/user/temp/vote/';
 
-  static Future<String?> POST(String api, Map<String?, String?> params) async {
+  static Future POST(String api, Map<String?, String?> params) async {
     var uri = Uri.https(base, api);
     var response = await post(uri, headers: header, body: jsonEncode(params));
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return response.body;
+    if (response.statusCode == 200 || response.statusCode == 201){
+      return jsonDecode(response.body);
     }
-    print('response.status code: ' + response.statusCode.toString());
+    print('response.body: ' + response.body);
+    print('params: $params');
+    print('status code:${response.statusCode}');
     print('${response.reasonPhrase}: reasonphrase');
     return 'null'; //shuni qaytaryaptikan
   }
