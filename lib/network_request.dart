@@ -54,7 +54,7 @@ class NetworkRequest2 {
     if (response.statusCode == 200 || response.statusCode == 201){
       return jsonDecode(response.body);
     }
-    print('response.body: ' + response.body);
+    print('response.body:2 ' + response.body);
     print('params: $params');
     print('status code:${response.statusCode}');
     print('${response.reasonPhrase}: reasonphrase');

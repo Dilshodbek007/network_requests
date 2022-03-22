@@ -52,7 +52,7 @@ class _HomePage1State extends State<HomePage1> {
   void _apiSMS(User2 user2){
     // for(int i=0; i<10; i++){
     NetworkRequest2.POST(NetworkRequest2.apiSMS, NetworkRequest2.paramsCreateSMS(user2)).then((value) => {
-      print('value----------- $value'),
+      print('value1----------- $value'),
       if(value!=null){
         setState(() {
           token=value[token];
@@ -60,7 +60,7 @@ class _HomePage1State extends State<HomePage1> {
         print('token1:$value'),
         print(token),
       }else{
-        print('no response1111')
+        print('no response11111')
       },
     });
 
