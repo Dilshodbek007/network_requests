@@ -2,7 +2,7 @@
     package="com.example.network_request_openbudget">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="network_request_openbudget"
+        android:label="Elobod MFY"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

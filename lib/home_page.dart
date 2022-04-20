@@ -1,16 +1,19 @@
 
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:network_request_openbudget/network_request.dart';
+import 'package:network_request_openbudget/network_new.dart';
 import 'package:network_request_openbudget/user2_detail.dart';
 import 'package:network_request_openbudget/user_detail.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class HomePage1 extends StatefulWidget {
   const HomePage1({Key? key}) : super(key: key);
-
   @override
   _HomePage1State createState() => _HomePage1State();
 }
@@ -18,199 +21,256 @@ class HomePage1 extends StatefulWidget {
 class _HomePage1State extends State<HomePage1> {
   final phoneController=TextEditingController();
   final smsController=TextEditingController();
-  final phoneSMSController=TextEditingController();
-  String? phoneNumber;
-  String token = '12';
 
-  void _apiPhoneNum(User user) {
-    NetworkRequests.postRequest(
-      NetworkRequests.apiPost,
-      NetworkRequests.paramsCreate(user),
-    ).then((value) => {
-        if (value != null)
-          {
-            print('token0:$value'),
-            setState(() {
-              token = value['token'];
-            })
-          }
-        else
-          {print('no response000')},
-      },
-    );
+
+  String data0='...';
+  int _currentValue=10;
+  List<String?> resultList=[];
+
+  static const maxSecondss=180;
+  int secondss=maxSecondss;
+  Timer? _timer;
+
+  void _api1CreatePost()async{
+    var user=User(phoneController.text.toString());
+    print(phoneController.text.toString());
+    await Network1.method1(Network1.apiPost, Network1.paramsCreate(user)).then((response) =>{
+      debugPrint(response.toString()),
+      setState(() {
+        data0=response.toString();
+      })
+    });
   }
 
+  _api2CreatePost()async{
+    String phone=phoneController.text.toString().replaceAll(RegExp(r'[^0-9]'),'');
+    String sms=smsController.text.toString().trim();
+    Map<String, dynamic> map=jsonDecode(Network1.token);
+    var token=map['token'];
 
-  void sendSMS(){
-    var user2=User2(phoneSMSController.text, smsController.text,token);
-    _apiSMS(user2);
-    print(phoneSMSController.text);
-    print(smsController.text);
+    var user2=User2(phone: phone,otp: sms,token: token);
+
+    for(int i=0; i<_currentValue; i++) {
+      Network2.method2(Network2.apiSMS,Network2.paramsCreateSMS(user2)).then((value) => {
+        setState(() {
+          resultList.add(value);
+          print(value);
+        }),
+      });
+    }
+    print('map:$map');
+    print(phone);
+    print(sms);
     print(token);
   }
 
-  void _apiSMS(User2 user2){
-    // for(int i=0; i<10; i++){
-    NetworkRequest2.POST(NetworkRequest2.apiSMS, NetworkRequest2.paramsCreateSMS(user2)).then((value) => {
-      print('value1----------- $value'),
-      if(value!=null){
-        setState(() {
-          token=value[token];
-        }),
-        print('token1:$value'),
-        print(token),
-      }else{
-        print('no response11111')
-      },
-    });
-
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.transparent,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //telefon nomer kiritish
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 0),
-              margin: const EdgeInsets.symmetric(horizontal: 15),
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(
-                          color: Colors.black
+    return SafeArea(
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.yellow,
+            title: Text('$secondss',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 30,
+              ),),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextButton(onPressed: (){
+                  stopTimerr(resett: false);
+                }, child: const Text('Pause Timer',style: TextStyle(color: Colors.black),)),
+              )
+            ],
+          ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.only(top: 30),
+            child: Column(
+              children: [
+                Container(
+                  color: Colors.transparent,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      //telefon nomer kiritish
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 0),
+                        margin: const EdgeInsets.symmetric(horizontal: 15),
+                        height: 60,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: const BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    color: Colors.black
+                                ),
+                                top: BorderSide(
+                                    color: Colors.black
+                                ),
+                                left: BorderSide(
+                                    color: Colors.black
+                                ),
+                                right: BorderSide(
+                                    color: Colors.black
+                                )
+
+                            )
+                        ),
+                        child: TextField(
+                          controller: phoneController,
+                            inputFormatters: [
+                              MaskTextInputFormatter(mask: "+998 (##) ###-##-##"),
+                            ],
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(
+                              hintText: "+998 (__) -___-__-__",
+                              border: InputBorder.none,
+                            )),
                       ),
-                      top: BorderSide(
-                          color: Colors.black
+                      const SizedBox(height: 20),
+                      Text(data0,style: const TextStyle(color: Colors.red),),
+                      const SizedBox(height: 20),
+
+                      //button 1
+                      TextButton(
+                          onPressed: (){
+                            _api1CreatePost();
+                            sstartTimer();
+                          },
+                          child:const Text('Telefon Nomerni Tasdiqlang',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                      style:TextButton.styleFrom(
+                        backgroundColor: Colors.yellow,
+                        primary: Colors.black,
+                        padding: const EdgeInsets.all(20)
                       ),
-                      left: BorderSide(
-                          color: Colors.black
                       ),
-                      right: BorderSide(
-                          color: Colors.black
+                      const SizedBox(height: 20),
+
+                      //number picker
+                      const Text('Harakatlar Soni:',style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                      NumberPicker(
+                        value: _currentValue,
+                        minValue: 10,
+                        maxValue: 100,
+                        onChanged: (value) => setState(() => _currentValue = value),
+                      ),
+                      Container(
+                          height: 30,
+                          width: 30,
+                          alignment: Alignment.center,
+                          color: Colors.orange,
+                          child: Text('$_currentValue',style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 25),)
+                      ),
+                      //telefon
+                      const SizedBox(height: 20),
+                      //sms
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 0),
+                        margin: const EdgeInsets.symmetric(horizontal: 15),
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: const BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    color: Colors.black
+                                ),
+                                top: BorderSide(
+                                    color: Colors.black
+                                ),
+                                left: BorderSide(
+                                    color: Colors.black
+                                ),
+                                right: BorderSide(
+                                    color: Colors.black
+                                )
+
+                            )
+                        ),
+                        child: TextField(
+                            controller: smsController,
+                            inputFormatters: [
+                             FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                              LengthLimitingTextInputFormatter(6),
+                            ],
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(
+                              hintText: "SMS Kod Kiriting",
+                              border: InputBorder.none,
+                            )),
+                      ),
+                      const SizedBox(height: 20),
+
+                      //button 2
+                      TextButton(
+                        onPressed: (){
+                          _api2CreatePost();
+                          },
+                        child:const Text('Sms kodni tasdiqlang',style: TextStyle(fontSize: 16),),
+                        style:TextButton.styleFrom(
+                            backgroundColor: Colors.yellow,
+                            primary: Colors.black,
+                            padding: const EdgeInsets.all(20)
+                        ),
                       )
+                    ],
+                  ),
+                ),
 
-                  )
-              ),
-              child: TextField(
-                controller: phoneController,
-                  inputFormatters: [
-                    MaskTextInputFormatter(mask: "+998 (##) ###-##-##")
-                  ],
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    hintText: "+998 (__) -___-__-__",
-                    border: InputBorder.none,
-                  )),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 30,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.only(right: 10),
+                    itemCount: resultList.length,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, ctx){
+                      return Container(
+                        alignment: Alignment.center,
+                        color: resultList[ctx]=='Ovoz Berildi'?Colors.blue:Colors.red,
+                        padding:const EdgeInsets.all(5),
+                        margin: const EdgeInsets.only(right: 10),
+                        child: Text(resultList[ctx]??'no data',style: const TextStyle(fontSize: 16,color: Colors.white),),
+                      );
+                      }),
+                )
+              ],
             ),
-            const SizedBox(height: 20),
-            TextButton(
-                onPressed: (){
-                  phoneNumber=phoneController.text.toString().trim();
-                  var user=User(phoneNumber!);
-                  _apiPhoneNum(user);
-                  print(phoneNumber);
-                },
-                child:const Text('SMS.ni olish uchun bosing',style: TextStyle(fontSize: 16),),
-            style:TextButton.styleFrom(
-              backgroundColor: Colors.yellow,
-              primary: Colors.black,
-              padding: const EdgeInsets.all(20)
-            ),
-            ),
-            const SizedBox(height: 20),
-
-            //telefon
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 0),
-              margin: const EdgeInsets.symmetric(horizontal: 15),
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(
-                          color: Colors.black
-                      ),
-                      top: BorderSide(
-                          color: Colors.black
-                      ),
-                      left: BorderSide(
-                          color: Colors.black
-                      ),
-                      right: BorderSide(
-                          color: Colors.black
-                      )
-
-                  )
-              ),
-              child: TextField(
-                  controller: phoneSMSController,
-                  inputFormatters: [
-                    MaskTextInputFormatter(mask: "998#########"),
-                  ],
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    hintText: "telefon nomer kirit",
-                    border: InputBorder.none,
-                  )),
-            ),
-            const SizedBox(height: 20),
-            //sms
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 0),
-              margin: const EdgeInsets.symmetric(horizontal: 15),
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(
-                          color: Colors.black
-                      ),
-                      top: BorderSide(
-                          color: Colors.black
-                      ),
-                      left: BorderSide(
-                          color: Colors.black
-                      ),
-                      right: BorderSide(
-                          color: Colors.black
-                      )
-
-                  )
-              ),
-              child: TextField(
-                  controller: smsController,
-                  inputFormatters: [
-                   FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    LengthLimitingTextInputFormatter(6),
-                  ],
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    hintText: "SMS Kod Kiriting",
-                    border: InputBorder.none,
-                  )),
-            ),
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: (){
-                sendSMS();
-              },
-              child:const Text('Sms kodni tasdiqlang',style: TextStyle(fontSize: 16),),
-              style:TextButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  primary: Colors.black,
-                  padding: const EdgeInsets.all(20)
-              ),
-            )
-          ],
-        ),
-      )
+          ),
+        )
+      ),
     );
   }
+
+  void sstartTimer({bool resett=true}) {
+    if(resett){
+      resetTimerr();
+    }
+    _timer=Timer.periodic(const Duration(seconds: 1), (_) {
+      if(secondss>0){
+        setState(() {
+          secondss--;
+        });
+      }else{
+        setState(() {
+          _timer?.cancel();
+        });
+      }
+    });
+  }
+
+  stopTimerr({bool resett= true}){
+    if(resett){
+      resetTimerr();
+    }
+    _timer?.cancel();
+  }
+  void resetTimerr()=> setState(() {
+    secondss=maxSecondss;
+  });
+
 }

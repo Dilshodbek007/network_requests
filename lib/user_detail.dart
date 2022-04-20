@@ -1,9 +1,5 @@
 
 class User {
-  // String phone1;
-  // String phone2;
-  // String phone3;
-  // String phone4;
   String phone;
   User(this.phone);
 

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "769196951766",
+    "project_id": "elobod-26a9b",
+    "storage_bucket": "elobod-26a9b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769196951766:android:6c6a240e2bd69a0601e177",
+        "android_client_info": {
+          "package_name": "com.example.network_request_openbudget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "769196951766-vaapmqcirj42vsqg3gs5rfl4i3uego35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfItTcMJ04ni_fW2vuTb4bcZz6eL49NMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "769196951766-vaapmqcirj42vsqg3gs5rfl4i3uego35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
