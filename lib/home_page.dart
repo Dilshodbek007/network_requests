@@ -48,7 +48,7 @@ class _HomePage1State extends State<HomePage1> {
     Map<String, dynamic> map=jsonDecode(Network1.token);
     var token=map['token'];
 
-    var user2=User2(phone: phone,otp: sms,token: token);
+    var user2=User2(phone: phone,OTP: sms,token: token);
 
     for(int i=0; i<_currentValue; i++) {
       Network2.method2(Network2.apiSMS,Network2.paramsCreateSMS(user2)).then((value) => {

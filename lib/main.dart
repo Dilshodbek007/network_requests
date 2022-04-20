@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Elobod',
       theme: ThemeData(
-
         primarySwatch: Colors.blue,
       ),
       home:const HomePage1(),

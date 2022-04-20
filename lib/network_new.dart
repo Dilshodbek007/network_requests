@@ -58,7 +58,7 @@ class Network2 {
       return 'Ovoz Berildi';
     }
 
-    return 'Kod noto\'g\'ri';
+    return 'Xato';
   }
 
   // http params
@@ -66,7 +66,7 @@ class Network2 {
     Map<String, String?> params = {};
     params.addAll({
       'application': '114350',
-      'OTP': user2.otp,
+      'OTP': user2.OTP,
       'phone': user2.phone,
       'token': user2.token,
     });
